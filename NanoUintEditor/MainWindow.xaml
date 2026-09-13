@@ -1,0 +1,166 @@
+<Window x:Class="NanoUintEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="NanoUintEditor — Screen Simulator"
+        Height="800" Width="1400"
+        MinHeight="600" MinWidth="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="Delete" Executed="Delete_Executed"/>
+        <CommandBinding Command="Save" Executed="Save_Executed"/>
+    </Window.CommandBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="22"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="280"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ═══ Toolbar ═══ -->
+        <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource Bg2Brush}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Margin="6,0" VerticalAlignment="Center">
+                <Button x:Name="BtnNew" Click="New_Click" ToolTip="新建场景 Ctrl+N">📄 新建</Button>
+                <Button x:Name="BtnSave" Click="Save_Click" ToolTip="保存场景 Ctrl+S">💾 保存</Button>
+                <Button x:Name="BtnLoad" Click="Load_Click" ToolTip="加载场景">📂 加载</Button>
+                <ComboBox x:Name="RecentCombo" Width="150" SelectionChanged="RecentCombo_SelectionChanged" FontSize="10"
+                          Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}"
+                          BorderBrush="{StaticResource BorderBrush}" ToolTip="最近文件"/>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2"/>
+                <Button x:Name="BtnAddObject" Click="AddObject_Click" ToolTip="添加空GameObject">➕ 添加对象</Button>
+                <Button x:Name="BtnFitScreen" Click="FitScreen_Click" ToolTip="选中对象铺满全屏">🔲 全屏适配</Button>
+                <Button x:Name="BtnDelete" Click="Delete_Click" ToolTip="删除选中 Del">🗑 删除</Button>
+                <Button x:Name="BtnUndo" Click="Undo_Click" ToolTip="撤销 Ctrl+Z">↩️ 撤销</Button>
+                <Button x:Name="BtnRedo" Click="Redo_Click" ToolTip="重做 Ctrl+Y">↪️ 重做</Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2"/>
+                <Button x:Name="BtnAlignLeft" Click="Align_Click" Tag="left" ToolTip="左对齐">⇤</Button>
+                <Button x:Name="BtnAlignCenterX" Click="Align_Click" Tag="centerX" ToolTip="水平居中">↔</Button>
+                <Button x:Name="BtnAlignRight" Click="Align_Click" Tag="right" ToolTip="右对齐">⇥</Button>
+                <Button x:Name="BtnAlignTop" Click="Align_Click" Tag="top" ToolTip="顶对齐">⇧</Button>
+                <Button x:Name="BtnAlignCenterY" Click="Align_Click" Tag="centerY" ToolTip="垂直居中">↕</Button>
+                <Button x:Name="BtnAlignBottom" Click="Align_Click" Tag="bottom" ToolTip="底对齐">⇩</Button>
+                <Button x:Name="BtnDistH" Click="Align_Click" Tag="distH" ToolTip="水平等距分布">⇔</Button>
+                <Button x:Name="BtnDistV" Click="Align_Click" Tag="distV" ToolTip="垂直等距分布">⇕</Button>
+                <Button x:Name="BtnSize" Click="Align_Click" Tag="size" ToolTip="统一尺寸（以第一个为准）">▦</Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2"/>
+                <Button x:Name="BtnSaveTemplate" Click="SaveTemplate_Click" ToolTip="把选中对象（含子级）存为模板">📦 存模板</Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2"/>
+                <Button x:Name="BtnPlay" Click="Play_Click" ToolTip="播放模式：实时预览当前场景（新窗口）">▶ 播放</Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2"/>
+                <Button x:Name="BtnGenCode" Click="GenCode_Click" ToolTip="生成C#代码">
+                    <TextBlock Foreground="{StaticResource AccentBrush}">⚡ 生成代码</TextBlock>
+                </Button>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2"/>
+                <TextBlock Text="缩放:" VerticalAlignment="Center" Margin="4,0,2,0" Foreground="{StaticResource Text3Brush}" FontSize="10"/>
+                <ComboBox x:Name="ZoomCombo" Width="60" SelectedIndex="1" SelectionChanged="Zoom_Changed"
+                          Background="{StaticResource BgBrush}" Foreground="{StaticResource TextBrush}"
+                          BorderBrush="{StaticResource BorderBrush}" FontSize="10">
+                    <ComboBoxItem>25%</ComboBoxItem><ComboBoxItem>50%</ComboBoxItem>
+                    <ComboBoxItem>75%</ComboBoxItem><ComboBoxItem>100%</ComboBoxItem>
+                    <ComboBoxItem>150%</ComboBoxItem><ComboBoxItem>200%</ComboBoxItem>
+                </ComboBox>
+                <TextBlock Text="网格:" VerticalAlignment="Center" Margin="8,0,2,0" Foreground="{StaticResource Text3Brush}" FontSize="10"/>
+                <CheckBox x:Name="GridToggle" IsChecked="True" VerticalAlignment="Center" Checked="Grid_Changed" Unchecked="Grid_Changed"/>
+                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,2"/>
+                <TextBox x:Name="SceneName" Text="NewScreen" Width="140" VerticalAlignment="Center" Margin="4,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ═══ Left Panel: Hierarchy + Assets ═══ -->
+        <Grid Grid.Row="1" Grid.Column="0" Background="{StaticResource BgBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="6"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Hierarchy -->
+            <Border Grid.Row="0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="22"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Background="{StaticResource Bg2Brush}" Padding="8,3"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+                        <TextBlock Text="层级" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Text3Brush}"/>
+                    </Border>
+                    <TreeView x:Name="HierarchyTree" Grid.Row="1" SelectedItemChanged="Hierarchy_Selected"
+                              Background="Transparent" BorderThickness="0" Margin="0,2"/>
+                </Grid>
+            </Border>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch" Background="{StaticResource BorderBrush}"/>
+
+            <!-- Asset Browser -->
+            <Border Grid.Row="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="22"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Background="{StaticResource Bg2Brush}" Padding="8,3"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+                        <TextBlock Text="资源" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Text3Brush}"/>
+                    </Border>
+                    <TreeView x:Name="AssetTree" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                              Margin="0,2"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ═══ Center: Scene Viewport ═══ -->
+        <Border Grid.Row="1" Grid.Column="1" Background="#0A0A0C"
+                MouseLeftButtonDown="Scene_MouseDown" MouseMove="Scene_MouseMove"
+                MouseLeftButtonUp="Scene_MouseUp" MouseWheel="Scene_Wheel"
+                AllowDrop="True" Drop="Scene_Drop" DragOver="Scene_DragOver">
+            <Viewbox x:Name="SceneViewbox" Stretch="Uniform">
+                <Canvas x:Name="SceneCanvas" Width="1920" Height="1080" Background="Black"
+                        ClipToBounds="True">
+                    <!-- Grid overlay -->
+                    <Canvas x:Name="GridOverlay" IsHitTestVisible="False"/>
+                </Canvas>
+            </Viewbox>
+        </Border>
+
+        <!-- ═══ Right Panel: Inspector ═══ -->
+        <Border Grid.Row="1" Grid.Column="2" Background="{StaticResource BgBrush}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1,0,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="InspectorPanel" Margin="0,0,0,0">
+                    <Border Background="{StaticResource Bg2Brush}" Padding="8,3"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+                        <TextBlock Text="属性" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource Text3Brush}"/>
+                    </Border>
+                    <TextBlock x:Name="InspectorEmpty" Text="选择对象以编辑属性" Foreground="{StaticResource Text3Brush}"
+                               FontSize="11" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+                    <StackPanel x:Name="InspectorContent" Visibility="Collapsed"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- ═══ Status Bar ═══ -->
+        <Border Grid.Row="2" Grid.ColumnSpan="3" Background="{StaticResource Bg2Brush}"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0"
+                Padding="8,2">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="StatusFile" Text="未保存" FontSize="10" Foreground="{StaticResource Text3Brush}"/>
+                <TextBlock Text=" | " FontSize="10" Foreground="{StaticResource BorderBrush}"/>
+                <TextBlock x:Name="StatusObjects" Text="0 对象" FontSize="10" Foreground="{StaticResource Text3Brush}"/>
+                <TextBlock Text=" | " FontSize="10" Foreground="{StaticResource BorderBrush}"/>
+                <TextBlock x:Name="StatusZoom" Text="100%" FontSize="10" Foreground="{StaticResource Text3Brush}"/>
+                <TextBlock Text=" | " FontSize="10" Foreground="{StaticResource BorderBrush}"/>
+                <TextBlock Text="1920×1080" FontSize="10" Foreground="{StaticResource Text3Brush}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

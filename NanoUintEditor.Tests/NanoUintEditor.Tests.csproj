@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>NanoUintEditor.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Link the model sources instead of referencing the WinExe output, which a running editor instance would lock -->
+    <Compile Include="..\NanoUintEditor\SceneModel.cs" Link="SceneModel.cs" />
+    <Compile Include="..\NanoUintEditor\EditorUtils.cs" Link="EditorUtils.cs" />
+    <Compile Include="..\NanoUintEditor\CodeGenerator.cs" Link="CodeGenerator.cs" />
+    <Compile Include="..\NanoUintEditor\UndoManager.cs" Link="UndoManager.cs" />
+    <Compile Include="..\NanoUintEditor\AssetCache.cs" Link="AssetCache.cs" />
+    <Compile Include="..\NanoUintEditor\SceneRuntime.cs" Link="SceneRuntime.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NanoUint\NanoUint.csproj" />
+  </ItemGroup>
+
+</Project>
