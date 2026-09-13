@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>NanoUintEditor</RootNamespace>
+    <AssemblyName>NanoUintEditor</AssemblyName>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>EditerLogo.ico</ApplicationIcon>
+    <NoWarn>CS0618</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NanoUint\NanoUint.csproj" />
+  </ItemGroup>
+
+</Project>
