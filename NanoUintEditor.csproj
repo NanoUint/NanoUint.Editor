@@ -13,4 +13,10 @@
     <ProjectReference Include="..\NanoUint\NanoUint2D\NanoUint2D.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The test project lives under this folder; keep its sources out of this project's glob. -->
+    <Compile Remove="NanoUintEditor.Tests\**" />
+    <None Remove="NanoUintEditor.Tests\**" />
+  </ItemGroup>
+
 </Project>
