@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NanoUint\NanoUint.csproj" />
+    <ProjectReference Include="..\NanoUint\NanoUint2D\NanoUint2D.csproj" />
   </ItemGroup>
 
 </Project>
